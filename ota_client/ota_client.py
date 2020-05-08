@@ -25,7 +25,7 @@ OTA_PORT = 8266
 SOCKET_TIMEOUT = 0.3
 
 # The first OTA package will be send this this broadcast address:
-BROADCAST_ADDRESS = '255.255.255.255'
+#BROADCAST_ADDRESS = '255.255.255.255'
 
 
 def signed_filename(fname):
@@ -65,7 +65,7 @@ def validate_ota(fname):
 
 
 class OtaClient:
-    def __init__(self, fname=None):
+    def __init__(self, fname=None, ip=None):
         self.fname = fname
         self.total_size = None
         self.rsa_sign = RsaSign()
@@ -77,10 +77,11 @@ class OtaClient:
 
         self.sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-        self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
+        #self.sock.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
         self.sock.settimeout(SOCKET_TIMEOUT)
 
-        self.device_ip = BROADCAST_ADDRESS  # send first packet as broadcast
+        #self.device_ip = BROADCAST_ADDRESS  # send first packet as broadcast
+        self.device_ip = ip
         self.next_update = 0
         self.start_time = 0
 
@@ -109,7 +110,8 @@ class OtaClient:
 
     def send_recv(self, offset, pkt, data_len):
 
-        if self.last_seq == 1 and self.device_ip == BROADCAST_ADDRESS:
+        #if self.last_seq == 1 and self.device_ip == BROADCAST_ADDRESS:
+        if self.last_seq == 1:
             print('wait for response...', end='')
         elif time.time() > self.next_update:
             duration = time.time() - self.start_time
@@ -157,10 +159,10 @@ class OtaClient:
                     print('Invalid resp')
                     continue
 
-                if self.device_ip == BROADCAST_ADDRESS:
-                    # set device IP address and send all next packages to this address
-                    print('received from:', repr(server))
-                    self.device_ip = server[0]
+                #if self.device_ip == BROADCAST_ADDRESS:
+                #    # set device IP address and send all next packages to this address
+                #    print('received from:', repr(server))
+                #    self.device_ip = server[0]
 
                 break
             except socket.timeout:

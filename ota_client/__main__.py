@@ -37,14 +37,14 @@ def sign(args):
 
 def ota(args):
     """Do the OTA update for a device"""
-    validate_ota(args.file)
-    OtaClient(args.file).live_ota()
+    #validate_ota(args.file)
+    OtaClient(args.file, args.ip).live_ota()
 
 
 def canned_ota(args):
     """Do the 'canned' OTA update for a device"""
     validate_ota(args.file)
-    OtaClient(args.file).canned_ota()
+    OtaClient(args.file, args.ip).canned_ota()
 
 
 def verify(args):
@@ -97,6 +97,7 @@ def cli():
         'ota', help=ota.__doc__
     )
     parser_ota.add_argument('file', help='file to process')
+    parser_ota.add_argument('ip', help='ip address of ESP8266')
     parser_ota.set_defaults(func=ota)
 
     ##############################################################################################
@@ -106,6 +107,7 @@ def cli():
         'canned_ota', help=canned_ota.__doc__
     )
     parser_canned_ota.add_argument('file', help='file to process')
+    parser_canned_ota.add_argument('ip', help='ip address of ESP8266')
     parser_canned_ota.set_defaults(func=canned_ota)
 
     ##############################################################################################
